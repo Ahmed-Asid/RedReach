@@ -26,6 +26,8 @@ import {
 import AvatarUpload from "@/app/components/forms/AvatarUpload";
 import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
 import LocationSelect from "@/app/components/forms/LocationSelect";
+import { signUp } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 
 
@@ -43,49 +45,60 @@ export default function RegisterPage() {
 
     const [passwordError, setPasswordError] = useState("");
 
-    const handleSubmit = (event) => {
+    const router = useRouter();
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
+        setPasswordError("");
 
         const formData = new FormData(event.currentTarget);
 
-        const password = formData.get("password");
-        const confirmPassword = formData.get("confirm_password");
+        const name = formData.get("name")?.toString().trim();
+        const email = formData.get("email")?.toString().trim();
+        const password = formData.get("password")?.toString();
+        const confirmPassword = formData
+            .get("confirm_password")
+            ?.toString();
 
         if (password !== confirmPassword) {
             setPasswordError("Passwords do not match.");
             return;
         }
 
-        setPasswordError("");
+        try {
+            const { data, error } = await signUp.email({
+                name,
+                email,
+                password,
 
-        /*
-         * These values should also be enforced
-         * by your backend.
-         */
-        formData.set("role", "donor");
-        formData.set("status", "active");
+                bloodGroup,
+                district,
+                upazila,
+            });
 
-        /*
-         * confirm_password is only used for
-         * frontend validation.
-         */
-        formData.delete("confirm_password");
+            if (error) {
+                console.error("Registration error:", error);
 
-        if (avatar) {
-            formData.set("avatar", avatar);
+                setPasswordError(
+                    error.message || "Unable to create your account."
+                );
+
+                return;
+            }
+
+            console.log("Registration successful:", data);
+
+            router.push('/auth/login');
+            // TODO:
+            // show a success message.
+        } catch (error) {
+            console.error("Unexpected registration error:", error);
+
+            setPasswordError(
+                "Something went wrong. Please try again."
+            );
         }
-
-        console.log(
-            Object.fromEntries(formData.entries())
-        );
-
-        /*
-         * TODO:
-         *
-         * 1. Upload avatar to ImageBB.
-         * 2. Get ImageBB URL.
-         * 3. Send registration data to backend.
-         */
     };
 
     return (
@@ -324,19 +337,6 @@ export default function RegisterPage() {
                                             )}
                                         </TextField>
                                     </HorizontalField>
-
-                                    {/* Hidden application values */}
-                                    <input
-                                        type="hidden"
-                                        name="role"
-                                        value="donor"
-                                    />
-
-                                    <input
-                                        type="hidden"
-                                        name="status"
-                                        value="active"
-                                    />
 
                                 </FieldGroup>
 

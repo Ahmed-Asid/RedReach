@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Link, Button, Avatar, Dropdown } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import {
     FiHeart,
     FiMenu,
@@ -9,20 +10,56 @@ import {
     FiGrid,
     FiLogOut,
 } from "react-icons/fi";
+import { authClient, useSession } from "@/lib/auth-client";
 
-export default function Navbar({ user = null }) {
+export default function Navbar() {
+    const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+
+    const {
+        data: session,
+        isPending,
+    } = useSession();
+
+    const user = session?.user;
     const isLoggedIn = !!user;
 
     const navItems = [
-        { label: "Donation Requests", href: "/donation-requests" },
+        {
+            label: "Donation Requests",
+            href: "/donation-requests",
+        },
         ...(isLoggedIn
             ? [{ label: "Funding", href: "/funding" }]
             : []),
     ];
 
-    const closeMenu = () => setIsMenuOpen(false);
+    const closeMenu = () => {
+        setIsMenuOpen(false);
+    };
+
+    const handleLogout = async () => {
+        if (isLoggingOut) return;
+
+        setIsLoggingOut(true);
+        closeMenu();
+
+        try {
+            await authClient.signOut({
+                fetchOptions: {
+                    onSuccess: () => {
+                        router.push("/auth/login");
+                        router.refresh();
+                    },
+                },
+            });
+        } catch (error) {
+            console.error("Logout error:", error);
+            setIsLoggingOut(false);
+        }
+    };
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-separator bg-background/80 backdrop-blur-xl">
@@ -32,7 +69,9 @@ export default function Navbar({ user = null }) {
                 <div className="flex items-center gap-4">
                     <button
                         type="button"
-                        onClick={() => setIsMenuOpen((prev) => !prev)}
+                        onClick={() =>
+                            setIsMenuOpen((prev) => !prev)
+                        }
                         className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground hover:bg-default-100 lg:hidden"
                         aria-label="Toggle menu"
                         aria-expanded={isMenuOpen}
@@ -57,7 +96,10 @@ export default function Navbar({ user = null }) {
 
                         <div className="flex flex-col leading-none">
                             <span className="text-lg font-bold tracking-tight text-foreground">
-                                Read<span className="text-danger">Reach</span>
+                                Red
+                                <span className="text-danger">
+                                    Reach
+                                </span>
                             </span>
 
                             <span className="hidden text-[9px] font-medium uppercase tracking-wider text-default-400 sm:block">
@@ -83,9 +125,11 @@ export default function Navbar({ user = null }) {
 
                 {/* Desktop Actions */}
                 <div className="hidden items-center gap-2 lg:flex">
-                    {!isLoggedIn ? (
+                    {isPending ? (
+                        <div className="h-9 w-24 animate-pulse rounded-lg bg-default-100" />
+                    ) : !isLoggedIn ? (
                         <>
-                            <Link href="/login">
+                            <Link href="/auth/login">
                                 <Button
                                     color="danger"
                                     variant="light"
@@ -96,7 +140,7 @@ export default function Navbar({ user = null }) {
                                 </Button>
                             </Link>
 
-                            <Link href="/register">
+                            <Link href="/auth/register">
                                 <Button
                                     color="danger"
                                     radius="lg"
@@ -108,19 +152,16 @@ export default function Navbar({ user = null }) {
                         </>
                     ) : (
                         <Dropdown>
-                            <Dropdown.Trigger>
-                                <button
-                                    type="button"
-                                    className="rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-danger"
-                                    aria-label="Open user menu"
-                                >
-                                    <Avatar
-                                        src={user?.image}
-                                        name={user?.name || "User"}
-                                        size="sm"
-                                        className="cursor-pointer"
-                                    />
-                                </button>
+                            <Dropdown.Trigger
+                                className="rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-danger"
+                                aria-label="Open user menu"
+                            >
+                                <Avatar
+                                    src={user.image || undefined}
+                                    name={user.name || "User"}
+                                    size="sm"
+                                    className="cursor-pointer"
+                                />
                             </Dropdown.Trigger>
 
                             <Dropdown.Popover placement="bottom end">
@@ -128,12 +169,11 @@ export default function Navbar({ user = null }) {
                                     aria-label="User menu"
                                     onAction={(key) => {
                                         if (key === "dashboard") {
-                                            window.location.href =
-                                                "/dashboard";
+                                            router.push("/dashboard");
                                         }
 
                                         if (key === "logout") {
-                                            // Add logout logic
+                                            handleLogout();
                                         }
                                     }}
                                 >
@@ -150,11 +190,14 @@ export default function Navbar({ user = null }) {
                                     <Dropdown.Item
                                         id="logout"
                                         textValue="Logout"
+                                        isDisabled={isLoggingOut}
                                         className="text-danger"
                                     >
                                         <span className="flex items-center gap-3">
                                             <FiLogOut className="h-4 w-4" />
-                                            Logout
+                                            {isLoggingOut
+                                                ? "Logging out..."
+                                                : "Logout"}
                                         </span>
                                     </Dropdown.Item>
                                 </Dropdown.Menu>
@@ -168,6 +211,7 @@ export default function Navbar({ user = null }) {
             {isMenuOpen && (
                 <div className="border-t border-separator bg-background lg:hidden">
                     <ul className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 sm:px-6">
+
                         {navItems.map((item) => (
                             <li key={item.href}>
                                 <Link
@@ -180,7 +224,11 @@ export default function Navbar({ user = null }) {
                             </li>
                         ))}
 
-                        {isLoggedIn ? (
+                        {isPending ? (
+                            <li>
+                                <div className="h-11 animate-pulse rounded-lg bg-default-100" />
+                            </li>
+                        ) : isLoggedIn ? (
                             <>
                                 <li>
                                     <Link
@@ -196,14 +244,14 @@ export default function Navbar({ user = null }) {
                                 <li>
                                     <button
                                         type="button"
-                                        onClick={() => {
-                                            closeMenu();
-                                            // Add logout logic
-                                        }}
-                                        className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium text-danger hover:bg-danger-50"
+                                        onClick={handleLogout}
+                                        disabled={isLoggingOut}
+                                        className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium text-danger hover:bg-danger-50 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         <FiLogOut className="h-4 w-4" />
-                                        Logout
+                                        {isLoggingOut
+                                            ? "Logging out..."
+                                            : "Logout"}
                                     </button>
                                 </li>
                             </>
@@ -211,7 +259,7 @@ export default function Navbar({ user = null }) {
                             <>
                                 <li>
                                     <Link
-                                        href="/login"
+                                        href="/auth/login"
                                         onClick={closeMenu}
                                         className="block w-full rounded-lg px-3 py-3 text-sm font-medium text-default-600 hover:bg-default-100 hover:text-foreground"
                                     >
@@ -221,7 +269,7 @@ export default function Navbar({ user = null }) {
 
                                 <li>
                                     <Link
-                                        href="/register"
+                                        href="/auth/register"
                                         onClick={closeMenu}
                                         className="block w-full rounded-lg px-3 py-3 text-sm font-medium text-danger hover:bg-danger-50"
                                     >
@@ -235,4 +283,5 @@ export default function Navbar({ user = null }) {
             )}
         </nav>
     );
+
 }

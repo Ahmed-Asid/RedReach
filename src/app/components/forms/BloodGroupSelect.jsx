@@ -24,20 +24,14 @@ export default function BloodGroupSelect({
     return (
         <Select
             name={name}
-            aria-label="blood group"
-            selectedKeys={value ? new Set([value]) : new Set()}
-            onSelectionChange={(keys) => {
-                const selected = Array.from(keys)[0] ?? "";
-                onChange?.(selected);
-            }}
+            value={value}
+            onChange={onChange}
+            aria-label="Blood group"
             isRequired={required}
             isDisabled={disabled}
             className="w-full"
         >
-            <Select.Trigger
-                aria-label="Blood group"
-                className="h-12 w-full rounded-xl bg-default-100 px-3 shadow-none"
-            >
+            <Select.Trigger className="h-12 w-full rounded-xl bg-default-100 px-3 shadow-none">
                 <div className="flex min-w-0 flex-1 items-center gap-3">
                     <FiDroplet className="size-4 shrink-0 text-default-400" />
 
