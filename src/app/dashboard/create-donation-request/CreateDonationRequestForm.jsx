@@ -12,9 +12,9 @@ import {
     FiMapPin,
     FiSend,
 } from "react-icons/fi";
+import LocationSelect from "@/app/components/forms/LocationSelect";
+import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
 
-import LocationSelect from "@/components/forms/LocationSelect";
-import BloodGroupSelect from "@/components/forms/BloodGroupSelect";
 
 const API_URL = "http://localhost:8000";
 

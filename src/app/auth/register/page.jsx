@@ -24,10 +24,10 @@ import {
     FiUser,
 } from "react-icons/fi";
 import AvatarUpload from "@/app/components/forms/AvatarUpload";
-import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
-import LocationSelect from "@/app/components/forms/LocationSelect";
 import { signUp } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
+import LocationSelect from "@/app/components/forms/LocationSelect";
 
 
 
