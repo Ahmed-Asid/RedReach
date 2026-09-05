@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Banner from "./components/homepage/Banner";
 import Featured from "./components/homepage/Featured";
 import ContactUs from "./components/homepage/ContactUs";
