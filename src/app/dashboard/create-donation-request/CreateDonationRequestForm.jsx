@@ -13,8 +13,8 @@ import {
     FiSend,
 } from "react-icons/fi";
 
-import LocationSelect from "@/components/LocationSelect";
-import BloodGroupSelect from "@/components/BloodGroupSelect";
+import LocationSelect from "@/components/forms/LocationSelect";
+import BloodGroupSelect from "@/components/forms/BloodGroupSelect";
 
 const API_URL = "http://localhost:8000";
 
