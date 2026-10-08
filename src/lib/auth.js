@@ -17,6 +17,10 @@ export const auth = betterAuth({
 
     user: {
         additionalFields: {
+            image: {
+                type: "string",
+                required: false,
+            },
             bloodGroup: {
                 type: "string",
                 required: true,

@@ -25,22 +25,22 @@ const NAVIGATION = {
     donor: [
         {
             label: "Dashboard",
-            href: "/dashboard",
+            href: "/dashboard/donor",
             icon: FiHome,
         },
         {
             label: "My Donation Requests",
-            href: "/dashboard/my-donation-requests",
+            href: "/dashboard/donor/my-donation-requests",
             icon: FiDroplet,
         },
         {
             label: "Create Donation Request",
-            href: "/dashboard/create-donation-request",
+            href: "/dashboard/donor/create-donation-request",
             icon: FiPlusCircle,
         },
         {
             label: "Profile",
-            href: "/dashboard/profile",
+            href: "/dashboard/donor/profile",
             icon: FiUser,
         },
     ],
@@ -48,17 +48,17 @@ const NAVIGATION = {
     volunteer: [
         {
             label: "Dashboard",
-            href: "/dashboard",
+            href: "/dashboard/volunteer",
             icon: FiHome,
         },
         {
             label: "All Blood Donation Requests",
-            href: "/dashboard/all-blood-donation-request",
+            href: "/dashboard/volunteer/all-blood-donation-request",
             icon: FiDroplet,
         },
         {
             label: "Profile",
-            href: "/dashboard/profile",
+            href: "/dashboard/volunteer/profile",
             icon: FiUser,
         },
     ],
@@ -66,22 +66,22 @@ const NAVIGATION = {
     admin: [
         {
             label: "Dashboard",
-            href: "/dashboard",
+            href: "/dashboard/admin",
             icon: FiHome,
         },
         {
             label: "All Users",
-            href: "/dashboard/all-users",
+            href: "/dashboard/admin/all-users",
             icon: FiUsers,
         },
         {
             label: "All Blood Donation Requests",
-            href: "/dashboard/all-blood-donation-request",
+            href: "/dashboard/admin/all-blood-donation-request",
             icon: FiDroplet,
         },
         {
             label: "Profile",
-            href: "/dashboard/profile",
+            href: "/dashboard/admin/profile",
             icon: FiUser,
         },
     ],

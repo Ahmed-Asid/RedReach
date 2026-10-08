@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useState } from "react";
 import { Button } from "@heroui/react";
 import {
     FiCamera,
@@ -8,6 +8,7 @@ import {
     FiUpload,
     FiUser,
 } from "react-icons/fi";
+import Image from "next/image";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -29,78 +30,91 @@ export default function AvatarUpload({
     size = "md",
     disabled = false,
 }) {
-    /*
-     * Create the preview URL from the selected file.
-     * No preview state is necessary.
-     */
-    const preview = useMemo(() => {
-        if (!value) return "";
+    const [uploading, setUploading] = useState(false);
 
-        return URL.createObjectURL(value);
-    }, [value]);
-
-    /*
-     * Clean up the object URL when the selected
-     * file changes or the component unmounts.
-     */
-    useEffect(() => {
-        if (!preview) return;
-
-        return () => {
-            URL.revokeObjectURL(preview);
-        };
-    }, [preview]);
-
-    const handleChange = (event) => {
+    const handleChange = async (event) => {
         const file = event.target.files?.[0];
 
         if (!file) return;
 
         if (!ALLOWED_TYPES.includes(file.type)) {
-            alert(
-                "Please select a JPG, PNG, or WEBP image."
-            );
-
+            alert("Please select a JPG, PNG, or WEBP image.");
             event.target.value = "";
             return;
         }
 
         if (file.size > MAX_FILE_SIZE) {
             alert("Image must be smaller than 5MB.");
-
             event.target.value = "";
             return;
         }
 
-        onChange?.(file);
+        try {
+            setUploading(true);
+
+            const response = await fetch(
+                "http://localhost:8000/api/upload-image",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": file.type,
+                    },
+                    body: file,
+                    credentials: "include",
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Failed to upload image."
+                );
+            }
+
+            onChange?.({
+                url: data.url,
+                deleteUrl: data.deleteUrl,
+            });
+        } catch (error) {
+            console.error("Image upload error:", error);
+
+            alert(
+                error.message ||
+                "Something went wrong while uploading the image."
+            );
+
+            event.target.value = "";
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleRemove = () => {
         onChange?.(null);
 
-        const input = document.getElementById(
-            "avatar-upload"
-        );
+        const input = document.getElementById("avatar-upload");
 
         if (input) {
             input.value = "";
         }
     };
 
-    const hasImage = Boolean(value && preview);
+    const hasImage = Boolean(value?.url);
 
     return (
         <div className="space-y-3">
             <div className="flex items-center gap-4">
-                {/* Avatar preview */}
                 <div
                     className={`shrink-0 overflow-hidden bg-danger-soft text-danger ${SIZE_CLASSES[size] || SIZE_CLASSES.md
                         }`}
                 >
                     {hasImage ? (
-                        <img
-                            src={preview}
+                        <Image
+                            src={value.url}
                             alt="Profile preview"
+                            width={128}
+                            height={128}
                             className="size-full object-cover"
                         />
                     ) : (
@@ -110,7 +124,6 @@ export default function AvatarUpload({
                     )}
                 </div>
 
-                {/* Controls */}
                 <div className="space-y-2">
                     <div>
                         <p className="text-sm font-semibold text-foreground">
@@ -125,20 +138,29 @@ export default function AvatarUpload({
                     <div className="flex items-center gap-2">
                         <label
                             htmlFor="avatar-upload"
-                            className={`inline-flex cursor-pointer items-center gap-2 rounded-xl bg-default-100 px-3.5 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-default-200 ${disabled
+                            className={`inline-flex items-center gap-2 rounded-xl bg-default-100 px-3.5 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-default-200 ${disabled || uploading
                                     ? "pointer-events-none opacity-50"
-                                    : ""
+                                    : "cursor-pointer"
                                 }`}
                         >
-                            {hasImage ? (
-                                <FiCamera className="size-3.5" />
+                            {uploading ? (
+                                <>
+                                    <span className="size-3.5 animate-spin rounded-full border-2 border-default-400 border-t-transparent" />
+                                    Uploading...
+                                </>
                             ) : (
-                                <FiUpload className="size-3.5" />
-                            )}
+                                <>
+                                    {hasImage ? (
+                                        <FiCamera className="size-3.5" />
+                                    ) : (
+                                        <FiUpload className="size-3.5" />
+                                    )}
 
-                            {hasImage
-                                ? "Change photo"
-                                : "Upload photo"}
+                                    {hasImage
+                                        ? "Change photo"
+                                        : "Upload photo"}
+                                </>
+                            )}
                         </label>
 
                         {hasImage && (
@@ -146,7 +168,7 @@ export default function AvatarUpload({
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                isDisabled={disabled}
+                                isDisabled={disabled || uploading}
                                 onPress={handleRemove}
                                 className="text-danger"
                             >
@@ -164,7 +186,7 @@ export default function AvatarUpload({
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 className="hidden"
-                disabled={disabled}
+                disabled={disabled || uploading}
                 onChange={handleChange}
             />
         </div>

@@ -22,8 +22,6 @@ const initialForm = {
     recipientName: "",
     recipientDistrict: "",
     recipientDistrictName: "",
-    recipientUpazila: "",
-    recipientUpazilaName: "",
     hospitalName: "",
     fullAddress: "",
     bloodGroup: "",
@@ -98,22 +96,20 @@ export default function CreateDonationRequestForm({ user }) {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(`${API_URL}/requests`, {
+            const response = await fetch(`${API_URL}/api/donation-requests`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    requesterId: user.id,
+                    requesterName: user.name,
+                    requesterEmail: user.email,
+
                     recipientName: form.recipientName.trim(),
-
                     recipientDistrict: form.recipientDistrict,
-                    recipientDistrictName:
-                        form.recipientDistrictName || form.recipientDistrict,
-
                     recipientUpazila: form.recipientUpazila,
-                    recipientUpazilaName:
-                        form.recipientUpazilaName || form.recipientUpazila,
 
                     hospitalName: form.hospitalName.trim(),
                     fullAddress: form.fullAddress.trim(),
@@ -124,6 +120,7 @@ export default function CreateDonationRequestForm({ user }) {
                     donationTime: form.donationTime,
 
                     requestMessage: form.requestMessage.trim(),
+                    status: 'pending',
                 }),
             });
 
@@ -135,7 +132,7 @@ export default function CreateDonationRequestForm({ user }) {
                 );
             }
 
-            router.push("/dashboard/my-donation-requests");
+            router.push("/dashboard/donor/my-donation-requests");
             router.refresh();
         } catch (err) {
             console.error("Create donation request error:", err);
@@ -169,13 +166,13 @@ export default function CreateDonationRequestForm({ user }) {
                     <Input
                         label="Requester name"
                         value={user?.name || ""}
-                        isReadOnly
+                        readOnly
                     />
 
                     <Input
                         label="Requester email"
                         value={user?.email || ""}
-                        isReadOnly
+                        readOnly
                     />
                 </div>
             </section>
@@ -241,9 +238,6 @@ export default function CreateDonationRequestForm({ user }) {
                                     )
                                 }
                                 placeholder="Enter hospital name"
-                                startContent={
-                                    <FiMapPin className="size-4 text-default-400" />
-                                }
                             />
                         </Field>
 
@@ -257,9 +251,6 @@ export default function CreateDonationRequestForm({ user }) {
                                     )
                                 }
                                 placeholder="Enter full address"
-                                startContent={
-                                    <FiMapPin className="size-4 text-default-400" />
-                                }
                             />
                         </Field>
                     </div>
@@ -303,9 +294,6 @@ export default function CreateDonationRequestForm({ user }) {
                                         event.target.value
                                     )
                                 }
-                                startContent={
-                                    <FiCalendar className="size-4 text-default-400" />
-                                }
                             />
                         </Field>
 
@@ -318,9 +306,6 @@ export default function CreateDonationRequestForm({ user }) {
                                         "donationTime",
                                         event.target.value
                                     )
-                                }
-                                startContent={
-                                    <FiClock className="size-4 text-default-400" />
                                 }
                             />
                         </Field>

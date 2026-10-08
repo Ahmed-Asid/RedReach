@@ -1,18 +1,19 @@
+
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { ListBox, Select } from "@heroui/react";
 import { FiMapPin } from "react-icons/fi";
 
-const LOCATION_FILES = {
-    districts: "/data/bangladesh/districts.json",
-    upazilas: "/data/bangladesh/upazilas.json",
-};
+import districtsData from "@/data/bangladesh/districts.json";
+import upazilasData from "@/data/bangladesh/upazilas.json";
+
+const districts = normalizeLocationData(districtsData);
+const upazilas = normalizeLocationData(upazilasData);
 
 export default function LocationSelect({
     name,
     type = "district",
-    value = null,
+    value = "",
     districtId = null,
     onChange,
     label,
@@ -20,85 +21,42 @@ export default function LocationSelect({
     required = false,
     disabled = false,
 }) {
-    const [districts, setDistricts] = useState([]);
-    const [upazilas, setUpazilas] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const options =
+        type === "district"
+            ? districts
+            : getUpazilasByDistrict(districtId);
 
-    useEffect(() => {
-        let cancelled = false;
+    const selectedItem = options.find(
+        (item) =>
+            String(item.name).toLowerCase() ===
+            String(value).toLowerCase()
+    );
 
-        const loadLocations = async () => {
-            try {
-                setLoading(true);
-                setError("");
-
-                const [districtResponse, upazilaResponse] =
-                    await Promise.all([
-                        fetch(LOCATION_FILES.districts),
-                        fetch(LOCATION_FILES.upazilas),
-                    ]);
-
-                if (!districtResponse.ok || !upazilaResponse.ok) {
-                    throw new Error("Failed to load location data.");
-                }
-
-                const [districtData, upazilaData] = await Promise.all([
-                    districtResponse.json(),
-                    upazilaResponse.json(),
-                ]);
-
-                if (cancelled) return;
-
-                setDistricts(normalizeLocationData(districtData));
-                setUpazilas(normalizeLocationData(upazilaData));
-            } catch (err) {
-                if (cancelled) return;
-
-                console.error("Location loading error:", err);
-                setError("Unable to load location data.");
-            } finally {
-                if (!cancelled) {
-                    setLoading(false);
-                }
-            }
-        };
-
-        loadLocations();
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
-
-    const options = useMemo(() => {
-        if (type === "district") {
-            return districts;
-        }
-
-        if (!districtId) {
-            return [];
-        }
-
-        return upazilas.filter(
-            (item) =>
-                String(item.district_id) === String(districtId)
-        );
-    }, [type, districtId, districts, upazilas]);
+    const selectedId = selectedItem
+        ? String(selectedItem.id)
+        : "";
 
     const defaultPlaceholder =
         type === "district"
             ? "Select district"
             : "Select upazila";
 
+    const handleChange = (id) => {
+        const selected = options.find(
+            (item) => String(item.id) === String(id)
+        );
+
+        onChange?.(selected?.name || "");
+    };
+
     return (
         <Select
             name={name}
-            value={value}
-            onChange={onChange}
+            value={selectedId}
+            onChange={handleChange}
             aria-label={label || defaultPlaceholder}
             isRequired={required}
-            isDisabled={disabled || loading || Boolean(error)}
+            isDisabled={disabled || options.length === 0}
             className="w-full"
         >
             <Select.Trigger className="h-12 w-full rounded-xl bg-default-100 px-3 shadow-none">
@@ -108,9 +66,7 @@ export default function LocationSelect({
                     <Select.Value
                         className="truncate text-sm"
                         placeholder={
-                            loading
-                                ? "Loading..."
-                                : placeholder || defaultPlaceholder
+                            placeholder || defaultPlaceholder
                         }
                     />
                 </div>
@@ -127,12 +83,36 @@ export default function LocationSelect({
                             textValue={item.name}
                         >
                             {item.name}
+
                             <ListBox.ItemIndicator />
                         </ListBox.Item>
                     ))}
                 </ListBox>
             </Select.Popover>
         </Select>
+    );
+}
+
+function getUpazilasByDistrict(districtValue) {
+    if (!districtValue) {
+        return [];
+    }
+
+    const district = districts.find(
+        (item) =>
+            String(item.id) === String(districtValue) ||
+            String(item.name).toLowerCase() ===
+            String(districtValue).toLowerCase()
+    );
+
+    if (!district) {
+        return [];
+    }
+
+    return upazilas.filter(
+        (item) =>
+            String(item.district_id) ===
+            String(district.id)
     );
 }
 

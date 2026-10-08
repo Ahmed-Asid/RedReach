@@ -38,7 +38,10 @@ const BENEFITS = [
 ];
 
 export default function RegisterPage() {
-    const [avatar, setAvatar] = useState(null);
+    const [avatar, setAvatar] = useState({
+        url: "",
+        deleteUrl: "",
+    });
     const [district, setDistrict] = useState(null);
     const [upazila, setUpazila] = useState(null);
     const [bloodGroup, setBloodGroup] = useState("");
@@ -71,7 +74,7 @@ export default function RegisterPage() {
                 name,
                 email,
                 password,
-
+                image: avatar?.url || null,
                 bloodGroup,
                 district,
                 upazila,

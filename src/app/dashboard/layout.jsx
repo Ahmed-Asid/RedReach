@@ -1,20 +1,19 @@
-import { headers } from "next/headers";
+
 import { redirect } from "next/navigation";
 
-import { auth } from "@/lib/auth";
 import DashboardShell from "./DashboardShell";
+import { getUserSession } from "@/lib/core/session";
 
 export default async function DashboardLayout({ children }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
 
-    if (!session?.user) {
+    const user = await getUserSession();
+
+    if (!user) {
         redirect("/login");
     }
 
     return (
-        <DashboardShell user={session.user}>
+        <DashboardShell user={user}>
             {children}
         </DashboardShell>
     );

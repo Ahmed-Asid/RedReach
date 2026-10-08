@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Link, Button, Avatar, Dropdown } from "@heroui/react";
+import { Link, Button, Dropdown } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import {
     FiHeart,
@@ -43,7 +43,6 @@ export default function Navbar() {
     const handleLogout = async () => {
         if (isLoggingOut) return;
 
-        setIsLoggingOut(true);
         closeMenu();
 
         try {
@@ -156,11 +155,10 @@ export default function Navbar() {
                                 className="rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-danger"
                                 aria-label="Open user menu"
                             >
-                                <Avatar
-                                    src={user.image || undefined}
-                                    name={user.name || "User"}
-                                    size="sm"
-                                    className="cursor-pointer"
+                                <img
+                                    src={user?.image}
+                                    alt={user?.name || "User"}
+                                    className="h-10 w-10 rounded-full object-cover"
                                 />
                             </Dropdown.Trigger>
 
@@ -169,7 +167,7 @@ export default function Navbar() {
                                     aria-label="User menu"
                                     onAction={(key) => {
                                         if (key === "dashboard") {
-                                            router.push("/dashboard");
+                                            router.push(`/dashboard/${user.role}`);
                                         }
 
                                         if (key === "logout") {
