@@ -13,6 +13,7 @@ import {
 
 import { getUserSession } from "@/lib/core/session";
 import { getBloodDonationRequestById } from "@/lib/api/requests";
+import DonateBloodModal from "@/app/components/requests/DonateBloodModal";
 
 export default async function DonationRequestDetailsPage({
     params,
@@ -242,13 +243,7 @@ export default async function DonationRequestDetailsPage({
                 </div>
 
                 {/* Footer */}
-                <div className="border-t border-default-200 bg-default-50 px-6 py-5 sm:px-8">
-                    <p className="text-center text-sm text-default-500">
-                        If you are willing to donate, please
-                        contact the requester and help save a
-                        life.
-                    </p>
-                </div>
+                <DonateBloodModal request={request} requestId={request._id} user={user} status={request.status} />
             </div>
         </main>
     );

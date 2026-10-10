@@ -181,16 +181,16 @@ export default function RequestsTable({
                                     <td className="px-5 py-4">
                                         {request.status ===
                                             "inprogress" &&
-                                            request.donor ? (
+                                            request.donorName ? (
                                             <div className="text-sm">
                                                 <p className="flex items-center gap-2 font-medium text-slate-700">
                                                     <FiUser size={14} />
-                                                    {request.donor.name}
+                                                    {request.donorName}
                                                 </p>
 
                                                 <p className="mt-1 flex items-center gap-2 text-slate-500">
                                                     <FiMail size={13} />
-                                                    {request.donor.email}
+                                                    {request.donorEmail}
                                                 </p>
                                             </div>
                                         ) : (
