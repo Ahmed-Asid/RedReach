@@ -21,7 +21,7 @@ import {
 
 import LocationSelect from "@/app/components/forms/LocationSelect";
 import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
-import { updateProfile } from "@/lib/actions/users";
+import { updateUser } from "@/lib/actions/users";
 
 export default function ProfileForm({ user }) {
     const router = useRouter();
@@ -108,7 +108,7 @@ export default function ProfileForm({ user }) {
                 image: form.image,
             };
             console.log('updated info', data)
-            await updateProfile(user.id, data);
+            await updateUser(user.id, data);
 
             setForm((current) => ({
                 ...current,

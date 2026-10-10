@@ -1,9 +1,16 @@
 import { notFound } from "next/navigation";
 import { getBloodDonationRequestById } from "@/lib/api/requests";
-import RequestEditForm from "@/app/components/requests/RequestEditForm";
+import RequestEditForm from "@/app/components/requests/RquestEditForm";
+import { getUserSession } from "@/lib/core/session";
+import BlockedAccount from "@/app/components/blocked/BlockedAccount";
 
 const RequestEditPage = async ({ params }) => {
     const { id } = await params;
+
+    const user = await getUserSession();
+    if (user.status !== 'active') {
+        return <BlockedAccount />
+    }
 
     let requestData;
 

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import DashboardPage from '../Dashboard';
 import { getUserSession } from '@/lib/core/session';
 import { getAllUser } from '@/lib/api/users';
@@ -7,7 +7,7 @@ import DashboardFeatureCard from '@/app/components/admin/DashboardFeatureCard';
 
 const AdminDashboardPage = async () => {
 
-    const user = getUserSession();
+    const user = await getUserSession();
     const users = await getAllUser();
     const requests = await getBloodDonationRequests();
 

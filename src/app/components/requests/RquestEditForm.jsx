@@ -23,7 +23,7 @@ import {
 
 import LocationSelect from "@/app/components/forms/LocationSelect";
 import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
-import { updateDonationRequest } from "@/lib/action/requests";
+import { updateDonationRequest } from "@/lib/actions/requests";
 
 const getDateValue = (value) => {
     if (!value) return "";
@@ -142,7 +142,6 @@ export default function RequestEditForm({ requestData, requestId }) {
             await updateDonationRequest(requestId, updatedData);
 
             toast.success("Donation request updated successfully.");
-            router.push("/dashboard/donor/my-donation-requests");
             router.refresh();
         } catch (error) {
             console.error("Update donation request error:", error);
@@ -189,7 +188,7 @@ export default function RequestEditForm({ requestData, requestId }) {
                             onChange={(value) =>
                                 handleChange("recipientName", value)
                             }
-                            isRequired
+                            required
                             className="w-full"
                         >
                             <Label>Recipient Name</Label>
@@ -198,34 +197,43 @@ export default function RequestEditForm({ requestData, requestId }) {
                             </InputGroup>
                         </TextField>
 
-                        <BloodGroupSelect
-                            name="bloodGroup"
-                            value={form.bloodGroup}
-                            onChange={(value) =>
-                                handleChange("bloodGroup", value)
-                            }
-                            required
-                        />
+                        <TextField>
+                            <Label>Blood Group</Label>
+                            <BloodGroupSelect
+                                name="bloodGroup"
+                                value={form.bloodGroup}
+                                onChange={(value) =>
+                                    handleChange("bloodGroup", value)
+                                }
+                                required
+                            />
+                        </TextField>
 
-                        <LocationSelect
-                            name="recipientDistrict"
-                            type="district"
-                            value={form.recipientDistrict}
-                            onChange={handleDistrictChange}
-                            required
-                        />
+                        <TextField>
+                            <Label>District</Label>
+                            <LocationSelect
+                                name="recipientDistrict"
+                                type="district"
+                                value={form.recipientDistrict}
+                                onChange={handleDistrictChange}
+                                required
+                            />
+                        </TextField>
 
-                        <LocationSelect
-                            name="recipientUpazila"
-                            type="upazila"
-                            value={form.recipientUpazila}
-                            districtId={form.recipientDistrict}
-                            onChange={(value) =>
-                                handleChange("recipientUpazila", value)
-                            }
-                            disabled={!form.recipientDistrict}
-                            required
-                        />
+                        <TextField>
+                            <Label>Upazila</Label>
+                            <LocationSelect
+                                name="recipientUpazila"
+                                type="upazila"
+                                value={form.recipientUpazila}
+                                districtId={form.recipientDistrict}
+                                onChange={(value) =>
+                                    handleChange("recipientUpazila", value)
+                                }
+                                disabled={!form.recipientDistrict}
+                                required
+                            />
+                        </TextField>
 
                         <TextField
                             name="hospitalName"

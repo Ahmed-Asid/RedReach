@@ -53,7 +53,7 @@ const NAVIGATION = {
         },
         {
             label: "All Blood Donation Requests",
-            href: "/dashboard/volunteer/all-blood-donation-request",
+            href: "/dashboard/volunteer/all-blood-donation-requests",
             icon: FiDroplet,
         },
         {
@@ -76,7 +76,7 @@ const NAVIGATION = {
         },
         {
             label: "All Blood Donation Requests",
-            href: "/dashboard/admin/all-blood-donation-request",
+            href: "/dashboard/admin/all-blood-donation-requests",
             icon: FiDroplet,
         },
         {

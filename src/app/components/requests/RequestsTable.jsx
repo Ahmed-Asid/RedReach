@@ -19,13 +19,12 @@ import DeleteRequestModal from "./DeleteRequestModal";
 import Link from "next/link";
 
 export default function RequestsTable({
+    user,
     requests,
     onStatusChange,
-    onDelete,
-    title = "Recent Donation Requests",
-    description = "Your latest donation requests.",
+    onDelete
 }) {
-
+    console.log("table", user)
     const statusStyles = {
         pending: "bg-yellow-50 text-yellow-700",
         inprogress: "bg-blue-50 text-blue-700",
@@ -49,15 +48,6 @@ export default function RequestsTable({
 
     return (
         <section>
-            <div className="mb-4">
-                <h2 className="text-xl font-bold text-slate-900">
-                    {title}
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-500">
-                    {description}
-                </p>
-            </div>
 
             <Card className="overflow-hidden border border-slate-200">
                 <div className="overflow-x-auto">
@@ -221,30 +211,34 @@ export default function RequestsTable({
                                                 <FiEye />
                                             </Link>
 
-                                            <Button
-                                                size="sm"
-                                                variant="flat"
-                                                aria-label="Edit request"
-                                                onPress={() =>
-                                                    onEdit(request._id)
-                                                }
-                                            >
-                                                <FiEdit2 />
-                                            </Button>
+                                            {
+                                                user.role !== "volunteer" && user.status === 'active' &&
+                                                <>
+                                                    <Link
+                                                        size="sm"
+                                                        variant="flat"
+                                                        aria-label="Edit request"
+                                                        href={`/dashboard/blood-donation-requests/edit/${request._id}`}
+                                                    >
+                                                        <FiEdit2 />
+                                                    </Link>
+                                                    <DeleteRequestModal
+                                                        request={request}
+                                                        onDelete={onDelete}
+                                                    >
+                                                        <Button
+                                                            size="sm"
+                                                            color="danger"
+                                                            variant="flat"
+                                                            aria-label="Delete request"
+                                                        >
+                                                            <FiTrash2 />
+                                                        </Button>
+                                                    </DeleteRequestModal>
+                                                </>
+                                            }
 
-                                            <DeleteRequestModal
-                                                request={request}
-                                                onDelete={onDelete}
-                                            >
-                                                <Button
-                                                    size="sm"
-                                                    color="danger"
-                                                    variant="flat"
-                                                    aria-label="Delete request"
-                                                >
-                                                    <FiTrash2 />
-                                                </Button>
-                                            </DeleteRequestModal>
+
                                         </div>
                                     </td>
                                 </tr>

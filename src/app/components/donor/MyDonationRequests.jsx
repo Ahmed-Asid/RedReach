@@ -17,7 +17,8 @@ const statuses = [
 ];
 
 export default function MyDonationRequests({
-    requests = [],
+    user,
+    requests = []
 }) {
     const router = useRouter();
 
@@ -31,64 +32,6 @@ export default function MyDonationRequests({
                     request.status?.toLowerCase() ===
                     selectedStatus.toLowerCase()
             );
-
-    // const handleStatusChange = async (id, status) => {
-    //     try {
-    //         const response = await fetch(
-    //             `${process.env.NEXT_PUBLIC_BASE_URL}/requests/${id}/status`,
-    //             {
-    //                 method: "PATCH",
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                 },
-    //                 credentials: "include",
-    //                 body: JSON.stringify({
-    //                     status: status,
-    //                 }),
-    //             }
-    //         );
-
-    //         if (!response.ok) {
-    //             throw new Error("Failed to update request status");
-    //         }
-
-    //         router.refresh();
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
-
-    // const handleDelete = async (id) => {
-    //     try {
-    //         const response = await fetch(
-    //             `${process.env.NEXT_PUBLIC_BASE_URL}/requests/${id}`,
-    //             {
-    //                 method: "DELETE",
-    //                 credentials: "include",
-    //             }
-    //         );
-
-    //         if (!response.ok) {
-    //             throw new Error("Failed to delete request");
-    //         }
-
-    //         router.refresh();
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
-
-    // const handleEdit = (id) => {
-    //     router.push(
-    //         `/donation-requests/edit-donation-request/${id}`
-    //     );
-    // };
-
-    // const handleView = (id) => {
-    //     router.push(
-    //         `/donation-requests/${id}`
-    //     );
-    // };
 
 
     const onStatusChange = async (id, state) => {
@@ -138,9 +81,8 @@ export default function MyDonationRequests({
             {/* Table */}
             {filteredRequests.length > 0 ? (
                 <RequestsTable
+                    user={user}
                     requests={filteredRequests}
-                    title="My Donation Requests"
-                    description="All donation requests created by you."
                     onStatusChange={onStatusChange}
                     onDelete={onDelete}
                 // onEdit={onEdit}

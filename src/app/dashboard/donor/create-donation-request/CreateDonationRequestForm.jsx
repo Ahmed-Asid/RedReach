@@ -31,6 +31,7 @@ const initialForm = {
 };
 
 export default function CreateDonationRequestForm({ user }) {
+    console.log('blocked user', user)
     const router = useRouter();
 
     const [form, setForm] = useState(initialForm);

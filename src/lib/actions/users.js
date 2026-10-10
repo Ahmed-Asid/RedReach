@@ -2,6 +2,6 @@
 
 import { serverMutation } from "../core/server"
 
-export const updateProfile = async(id, data) => {
+export const updateUser = async(id, data) => {
     return serverMutation(`/api/users/${id}`, data, 'PATCH')
 }

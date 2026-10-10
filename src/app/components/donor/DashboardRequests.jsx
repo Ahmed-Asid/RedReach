@@ -6,7 +6,7 @@ import RequestsTable from '../requests/RequestsTable';
 import { useRouter } from 'next/navigation';
 import { deleteDonationRequest, updateDonationRequest } from '@/lib/actions/requests';
 
-const DashboardRequests = ({ requests }) => {
+const DashboardRequests = ({ user, requests }) => {
 
     const router = useRouter();
 
@@ -32,6 +32,7 @@ const DashboardRequests = ({ requests }) => {
         <>
 
             <RequestsTable
+                user={user}
                 requests={recentRequests}
                 onStatusChange={onStatusChange}
                 onDelete={onDelete}

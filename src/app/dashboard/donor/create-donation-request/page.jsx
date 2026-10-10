@@ -3,18 +3,16 @@ import { getUserSession, requireRole } from "@/lib/core/session";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import CreateDonationRequestForm from "./CreateDonationRequestForm";
+import BlockedAccount from "@/app/components/blocked/BlockedAccount";
 
 
 export default async function CreateDonationRequestPage() {
 
     const user = await getUserSession();
 
-    if (!["donor", "admin"].includes(user.role)) {
-        redirect("/dashboard");
-    }
-
     if (user.status !== "active") {
-        redirect("/dashboard");
+        console.log('blocked user', user)
+        return <BlockedAccount />
     }
 
     return (
