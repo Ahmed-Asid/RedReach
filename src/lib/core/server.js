@@ -36,13 +36,18 @@ export const serverMutation = async (path, data = null, method = "POST") => {
 
 
 // handle 401, 404, 403
-const handleStatusCode = res => {
+const handleStatusCode = async (res) => {
     if (res.status === 401) {
-        redirect('/unauthorized')
-    }
-    else if (res.status === 403) {
+        redirect('/unauthorized');
+    } else if (res.status === 403) {
         redirect('/forbidden');
     }
 
-    return res.json()
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        throw new Error(`API failed to return JSON from ${res.url}. Status: ${res.status}. Response: ${text.slice(0, 100)}`);
+    }
+
+    return res.json();
 }
