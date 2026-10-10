@@ -74,7 +74,7 @@ export default function RegisterPage() {
                 name,
                 email,
                 password,
-                image: avatar?.url || null,
+                image: avatar?.url || "",
                 bloodGroup,
                 district,
                 upazila,
@@ -92,7 +92,7 @@ export default function RegisterPage() {
 
             console.log("Registration successful:", data);
 
-            router.push('/auth/login');
+            router.push('/');
             // TODO:
             // show a success message.
         } catch (error) {

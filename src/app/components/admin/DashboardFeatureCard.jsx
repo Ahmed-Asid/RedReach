@@ -8,32 +8,31 @@ import {
     FiUsers,
 } from "react-icons/fi";
 
-export default function DashboardFeatureCard({
-    stats = {},
-}) {
+export default function DashboardFeatureCard({ users, requests }) {
+
     const cards = [
         {
             title: "Total Donors",
-            count: stats.totalDonors ?? 0,
+            count: users.length ?? 0,
             icon: FiUsers,
             description: "Registered blood donors",
         },
         {
             title: "Total Funding",
-            count: stats.totalFunding ?? 0,
+            count: 0,
             icon: FiDollarSign,
             description: "Total amount donated",
         },
         {
             title: "Blood Donation Requests",
-            count: stats.totalRequests ?? 0,
+            count: requests.length ?? 0,
             icon: FiDroplet,
             description: "Total donation requests",
         },
     ];
 
     return (
-        <main className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
+        <main className="rounded-3xl bg-slate-50 p-4 sm:p-6 lg:p-8">
             <section>
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {cards.map((card) => {

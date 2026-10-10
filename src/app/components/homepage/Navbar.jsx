@@ -9,6 +9,7 @@ import {
     FiX,
     FiGrid,
     FiLogOut,
+    FiUser,
 } from "react-icons/fi";
 import { authClient, useSession } from "@/lib/auth-client";
 
@@ -152,14 +153,14 @@ export default function Navbar() {
                     ) : (
                         <Dropdown>
                             <Dropdown.Trigger
-                                className="rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-danger"
+                                className="rounded-full outline-none ring-offset-2 ring-1 ring-neutral focus-visible:ring-2 focus-visible:ring-danger"
                                 aria-label="Open user menu"
                             >
-                                <img
+                                {user.image === "" ? <FiUser size={20} /> : <img
                                     src={user?.image}
                                     alt={user?.name || "User"}
                                     className="h-10 w-10 rounded-full object-cover"
-                                />
+                                />}
                             </Dropdown.Trigger>
 
                             <Dropdown.Popover placement="bottom end">

@@ -25,12 +25,6 @@ export default function RequestsTable({
     title = "Recent Donation Requests",
     description = "Your latest donation requests.",
 }) {
-    if (!requests?.length) {
-        return <div className="flex items-center content-center">
-            <p>You haven&apos;t requested for a donation yet.</p>
-        </div>
-    }
-
 
     const statusStyles = {
         pending: "bg-yellow-50 text-yellow-700",

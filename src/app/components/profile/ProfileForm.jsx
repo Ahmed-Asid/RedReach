@@ -2,11 +2,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     Button,
     Card,
     Form,
-    Input,
     InputGroup,
     Label,
     TextField,
@@ -21,30 +21,26 @@ import {
 
 import LocationSelect from "@/app/components/forms/LocationSelect";
 import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
-
-const API_URL = "http://localhost:8000";
+import { updateProfile } from "@/lib/actions/users";
 
 export default function ProfileForm({ user }) {
+    const router = useRouter();
+
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
-    const [form, setForm] = useState({
-        name: user?.name || "",
-        email: user?.email || "",
-        image: user?.image || "",
-        bloodGroup: user?.bloodGroup || "",
-        district: user?.district || "",
-        upazila: user?.upazila || "",
+    const getInitialForm = () => ({
+        name: user?.name ?? "",
+        email: user?.email ?? "",
+        image: user?.image ?? "",
+        bloodGroup: user?.bloodGroup ?? "",
+        district: user?.district ?? "",
+        upazila: user?.upazila ?? "",
     });
 
-    const getInitialForm = () => ({
-        name: user?.name || "",
-        email: user?.email || "",
-        image: user?.image || "",
-        bloodGroup: user?.bloodGroup || "",
-        district: user?.district || "",
-        upazila: user?.upazila || "",
-    });
+    console.log("initial profile info", user)
+
+    const [form, setForm] = useState(getInitialForm);
 
     const handleChange = (field, value) => {
         setForm((current) => ({
@@ -62,6 +58,7 @@ export default function ProfileForm({ user }) {
     };
 
     const handleEdit = () => {
+        setForm(getInitialForm());
         setIsEditing(true);
     };
 
@@ -73,9 +70,7 @@ export default function ProfileForm({ user }) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!isEditing) {
-            return;
-        }
+        if (!isEditing || isSaving) return;
 
         if (!form.name.trim()) {
             toast.danger("Name is required.");
@@ -97,50 +92,38 @@ export default function ProfileForm({ user }) {
             return;
         }
 
+        if (!user?.id) {
+            toast.danger("Unable to identify your account.");
+            return;
+        }
+
         setIsSaving(true);
 
         try {
-            const response = await fetch(
-                `${API_URL}/auth/profile`,
-                {
-                    method: "PATCH",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name: form.name.trim(),
-                        bloodGroup: form.bloodGroup,
-                        district: form.district,
-                        upazila: form.upazila,
-                        image: form.image,
-                    }),
-                }
-            );
+            const data = {
+                name: form.name.trim(),
+                bloodGroup: form.bloodGroup,
+                district: form.district,
+                upazila: form.upazila,
+                image: form.image,
+            };
+            console.log('updated info', data)
+            await updateProfile(user.id, data);
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data?.message ||
-                    "Failed to update profile."
-                );
-            }
+            setForm((current) => ({
+                ...current,
+                ...data,
+            }));
 
             setIsEditing(false);
+            toast.success("Profile updated successfully.");
 
-            toast.success(
-                "Profile updated successfully."
-            );
+            router.refresh();
         } catch (error) {
-            console.error(
-                "Profile update error:",
-                error
-            );
+            console.error("Profile update error:", error);
 
             toast.danger(
-                error.message ||
-                "Failed to update profile."
+                error.message || "Failed to update profile."
             );
         } finally {
             setIsSaving(false);
@@ -186,10 +169,7 @@ export default function ProfileForm({ user }) {
                             isDisabled={isSaving}
                         >
                             <FiSave />
-
-                            {isSaving
-                                ? "Saving..."
-                                : "Save Changes"}
+                            {isSaving ? "Saving..." : "Save Changes"}
                         </Button>
                     </div>
                 )}
@@ -201,16 +181,13 @@ export default function ProfileForm({ user }) {
                     onSubmit={handleSubmit}
                     className="space-y-6"
                 >
-                    {/* Avatar */}
+                    {/* Profile avatar */}
                     <div className="flex items-center gap-4">
                         <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-danger-50">
                             {form.image ? (
                                 <img
                                     src={form.image}
-                                    alt={
-                                        form.name ||
-                                        "Profile avatar"
-                                    }
+                                    alt={form.name || "Profile avatar"}
                                     className="size-full object-cover"
                                 />
                             ) : (
@@ -234,21 +211,15 @@ export default function ProfileForm({ user }) {
                         name="name"
                         value={form.name}
                         onChange={(value) =>
-                            handleChange(
-                                "name",
-                                value
-                            )
+                            handleChange("name", value)
                         }
                         isRequired
-                        isDisabled={!isEditing}
+                        isDisabled={!isEditing || isSaving}
                         className="w-full"
                     >
                         <Label>Full Name</Label>
 
-                        <InputGroup
-                            variant="secondary"
-                            fullWidth
-                        >
+                        <InputGroup variant="secondary" fullWidth>
                             <InputGroup.Prefix>
                                 <FiUser className="size-4 text-default-400" />
                             </InputGroup.Prefix>
@@ -259,7 +230,7 @@ export default function ProfileForm({ user }) {
                         </InputGroup>
                     </TextField>
 
-                    {/* Email */}
+                    {/* Email: read-only */}
                     <TextField
                         name="email"
                         value={form.email}
@@ -268,44 +239,34 @@ export default function ProfileForm({ user }) {
                     >
                         <Label>Email</Label>
 
-                        <InputGroup
-                            variant="secondary"
-                            fullWidth
-                        >
+                        <InputGroup variant="secondary" fullWidth>
                             <InputGroup.Prefix>
                                 <FiMail className="size-4 text-default-400" />
                             </InputGroup.Prefix>
 
-                            <InputGroup.Input
-                                readOnly
-                            />
+                            <InputGroup.Input readOnly />
                         </InputGroup>
                     </TextField>
 
-                    {/* Blood Group */}
+                    {/* Blood group */}
                     <BloodGroupSelect
                         name="bloodGroup"
                         value={form.bloodGroup}
                         onChange={(value) =>
-                            handleChange(
-                                "bloodGroup",
-                                value
-                            )
+                            handleChange("bloodGroup", value)
                         }
-                        disabled={!isEditing}
+                        disabled={!isEditing || isSaving}
                         required
                     />
 
-                    {/* Location */}
+                    {/* District and upazila */}
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <LocationSelect
                             name="district"
                             type="district"
                             value={form.district}
-                            onChange={
-                                handleDistrictChange
-                            }
-                            disabled={!isEditing}
+                            onChange={handleDistrictChange}
+                            disabled={!isEditing || isSaving}
                             required
                         />
 
@@ -315,13 +276,11 @@ export default function ProfileForm({ user }) {
                             value={form.upazila}
                             districtId={form.district}
                             onChange={(value) =>
-                                handleChange(
-                                    "upazila",
-                                    value
-                                )
+                                handleChange("upazila", value)
                             }
                             disabled={
                                 !isEditing ||
+                                isSaving ||
                                 !form.district
                             }
                             required
