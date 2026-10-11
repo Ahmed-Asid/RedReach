@@ -231,7 +231,7 @@ export default function Navbar() {
                             <>
                                 <li>
                                     <Link
-                                        href="/dashboard"
+                                        href={`/dashboard/${user.role}`}
                                         onClick={closeMenu}
                                         className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-default-600 hover:bg-default-100 hover:text-foreground"
                                     >

@@ -14,9 +14,7 @@ import {
 } from "react-icons/fi";
 import LocationSelect from "@/app/components/forms/LocationSelect";
 import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
-
-
-const API_URL = "http://localhost:8000";
+import { postDonationRequest } from "@/lib/actions/requests";
 
 const initialForm = {
     recipientName: "",
@@ -97,41 +95,26 @@ export default function CreateDonationRequestForm({ user }) {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(`${API_URL}/api/donation-requests`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    requesterId: user.id,
-                    requesterName: user.name,
-                    requesterEmail: user.email,
+            await postDonationRequest({
+                requesterId: user.id,
+                requesterName: user.name,
+                requesterEmail: user.email,
 
-                    recipientName: form.recipientName.trim(),
-                    recipientDistrict: form.recipientDistrict,
-                    recipientUpazila: form.recipientUpazila,
+                recipientName: form.recipientName.trim(),
+                recipientDistrict: form.recipientDistrict,
+                recipientUpazila: form.recipientUpazila,
 
-                    hospitalName: form.hospitalName.trim(),
-                    fullAddress: form.fullAddress.trim(),
+                hospitalName: form.hospitalName.trim(),
+                fullAddress: form.fullAddress.trim(),
 
-                    bloodGroup: form.bloodGroup,
+                bloodGroup: form.bloodGroup,
 
-                    donationDate: form.donationDate,
-                    donationTime: form.donationTime,
+                donationDate: form.donationDate,
+                donationTime: form.donationTime,
 
-                    requestMessage: form.requestMessage.trim(),
-                    status: 'pending',
-                }),
+                requestMessage: form.requestMessage.trim(),
+                status: "pending",
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data?.message || "Failed to create donation request."
-                );
-            }
 
             router.push("/dashboard/donor/my-donation-requests");
             router.refresh();

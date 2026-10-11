@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { serverMutation } from "../core/server"
 import { getUserSession } from "../core/session";
 
+export const postDonationRequest = async(requestData) => {
+    return serverMutation(`/api/donation-requests`, requestData)
+}
+
 export const updateDonationRequest = async(id, data) => {
     const result = await serverMutation(`/api/donation-requests/${id}`, data, 'PATCH');
     revalidatePath('/dashboard/donor/my-donation-requests');

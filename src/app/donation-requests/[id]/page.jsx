@@ -1,12 +1,13 @@
-
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@heroui/react";
+
 import {
     FiArrowLeft,
     FiCalendar,
     FiClock,
     FiDroplet,
+    FiHome,
     FiMapPin,
     FiMessageSquare,
     FiUser,
@@ -15,14 +16,15 @@ import {
 import { getUserSession } from "@/lib/core/session";
 import { getBloodDonationRequestById } from "@/lib/api/requests";
 import DonateBloodModal from "@/app/components/requests/DonateBloodModal";
+import Navbar from "@/app/components/homepage/Navbar";
+
 
 export default async function DonationRequestDetailsPage({
     params,
 }) {
+
     const user = await getUserSession();
 
-
-    // This page is private.
     if (!user) {
         redirect("/auth/login");
     }
@@ -30,278 +32,368 @@ export default async function DonationRequestDetailsPage({
     const { id } = await params;
 
     const request = await getBloodDonationRequestById(id);
-    console.log("request details", id, request)
 
-    // Request does not exist
+
     if (!request) {
         return (
-            <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-                <div className="rounded-2xl border border-default-200 bg-content1 px-6 py-16 text-center shadow-sm">
-                    <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-danger-50">
-                        <FiDroplet className="size-7 text-danger" />
+            <main className="mx-auto max-w-4xl px-4 py-10">
+                <div className="rounded-3xl border border-default-200 bg-content1 p-12 text-center">
+
+                    <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-danger-50">
+                        <FiDroplet className="size-8 text-danger" />
                     </div>
 
-                    <h1 className="mt-5 text-2xl font-bold text-foreground">
+                    <h1 className="mt-5 text-2xl font-bold">
                         Request Not Found
                     </h1>
 
-                    <p className="mx-auto mt-2 max-w-md text-sm text-default-500">
-                        The donation request you are looking for
-                        does not exist or may have been removed.
-                    </p>
-
-                    <Link
-                        href="/donation-requests"
-                        className="mt-6 inline-block"
-                    >
+                    <Link href="/donation-requests">
                         <Button
+                            className="mt-6"
                             color="danger"
                             variant="flat"
                         >
                             <FiArrowLeft />
-                            Back to Requests
+                            Back Requests
                         </Button>
                     </Link>
+
                 </div>
             </main>
         );
     }
 
+
     return (
-        <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        <>
+            <Navbar />
+            <main className="mx-auto max-w-5xl px-4 py-10">
 
-            {/* Main Card */}
-            <div className="overflow-hidden rounded-2xl border border-default-200 bg-content1 shadow-sm">
-                {/* Header */}
-                <div className="border-b border-danger-100 bg-danger-50 px-6 py-8 sm:px-8">
-                    <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <div className="flex items-center gap-2 text-sm font-medium text-danger">
-                                <FiDroplet />
-                                <span>
-                                    Blood Donation Request
+
+                <div className="overflow-hidden rounded-3xl border border-default-200 bg-content1 shadow-sm">
+
+
+                    {/* Hero */}
+
+                    <div className="bg-gradient-to-r from-danger-50 to-white p-8">
+
+                        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+
+
+                            <div>
+
+                                <div className="flex items-center gap-2 text-danger">
+                                    <FiDroplet />
+                                    <span className="font-medium">
+                                        Blood Donation Request
+                                    </span>
+                                </div>
+
+
+                                <h1 className="mt-3 text-3xl font-bold">
+                                    Blood needed for {request.recipientName}
+                                </h1>
+
+
+                                <p className="mt-2 text-default-500">
+                                    Help save a life by donating blood.
+                                </p>
+
+                            </div>
+
+
+
+                            <div className="rounded-3xl bg-danger p-6 text-center text-white shadow-lg">
+
+                                <FiDroplet className="mx-auto size-7" />
+
+                                <p className="mt-2 text-3xl font-bold">
+                                    {request.bloodGroup}
+                                </p>
+
+                                <span className="text-sm opacity-80">
+                                    Required
                                 </span>
+
                             </div>
 
-                            <h1 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">
-                                Blood needed for{" "}
-                                {request.recipientName}
-                            </h1>
 
-                            <p className="mt-2 text-sm text-default-500">
-                                Please review the request details
-                                before responding.
-                            </p>
                         </div>
 
-                        {/* Blood Group */}
-                        <div className="flex size-20 shrink-0 flex-col items-center justify-center rounded-2xl bg-danger text-white">
-                            <FiDroplet className="size-5" />
-
-                            <span className="mt-1 text-xl font-bold">
-                                {request.bloodGroup}
-                            </span>
-                        </div>
                     </div>
-                </div>
 
-                {/* Content */}
-                <div className="space-y-8 p-6 sm:p-8">
-                    {/* Recipient Information */}
-                    <section>
-                        <div className="mb-4 flex items-center gap-2">
-                            <FiUser className="text-danger" />
 
-                            <h2 className="text-lg font-semibold text-foreground">
-                                Recipient Information
-                            </h2>
-                        </div>
 
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            <InfoItem
+                    <div className="grid gap-8 p-8 lg:grid-cols-3">
+
+
+                        {/* Main information */}
+
+                        <div className="space-y-8 lg:col-span-2">
+
+
+
+                            <Section
                                 icon={<FiUser />}
-                                label="Recipient Name"
-                                value={
-                                    request.recipientName
-                                }
-                            />
+                                title="Recipient"
+                            >
 
-                            <InfoItem
-                                icon={<FiDroplet />}
-                                label="Blood Group"
-                                value={
-                                    request.bloodGroup
-                                }
-                            />
+                                <InfoCard
+                                    title="Patient Name"
+                                    value={request.recipientName}
+                                />
 
-                            <InfoItem
+                                <InfoCard
+                                    title="Blood Group"
+                                    value={request.bloodGroup}
+                                />
+
+                            </Section>
+
+
+
+
+                            <Section
+                                icon={<FiHome />}
+                                title="Hospital Information"
+                            >
+
+                                <InfoCard
+                                    title="Hospital"
+                                    value={request.hospitalName}
+                                />
+
+
+                                <InfoCard
+                                    title="Address"
+                                    value={request.fullAddress}
+                                />
+
+                            </Section>
+
+
+
+                            <Section
                                 icon={<FiMapPin />}
-                                label="District"
-                                value={
-                                    request.recipientDistrict
-                                }
-                            />
+                                title="Location"
+                            >
 
-                            <InfoItem
-                                icon={<FiMapPin />}
-                                label="Upazila"
-                                value={
-                                    request.recipientUpazila
-                                }
-                            />
+                                <InfoCard
+                                    title="District"
+                                    value={request.recipientDistrict}
+                                />
+
+                                <InfoCard
+                                    title="Upazila"
+                                    value={request.recipientUpazila}
+                                />
+
+
+                            </Section>
+
+
+
+                            {
+                                request.requestMessage &&
+                                <Section
+                                    icon={<FiMessageSquare />}
+                                    title="Message"
+                                >
+
+                                    <div className="rounded-2xl bg-default-50 p-5 leading-7 text-default-700">
+                                        {request.requestMessage}
+                                    </div>
+
+                                </Section>
+                            }
+
+
                         </div>
-                    </section>
 
-                    {/* Donation Location */}
-                    <section>
-                        <div className="mb-4 flex items-center gap-2">
-                            <FiMapPin className="text-danger" />
 
-                            <h2 className="text-lg font-semibold text-foreground">
-                                Donation Location
-                            </h2>
-                        </div>
 
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            <InfoItem
-                                icon={<FiMapPin />}
-                                label="Hospital"
-                                value={
-                                    request.hospitalName
-                                }
-                            />
+                        {/* Side summary */}
 
-                            <InfoItem
-                                icon={<FiMapPin />}
-                                label="District"
-                                value={
-                                    request.recipientDistrict
-                                }
-                            />
+                        <aside className="rounded-3xl bg-default-50 p-6 h-fit">
 
-                            <div className="rounded-xl bg-default-50 p-4 sm:col-span-2">
-                                <p className="text-sm text-default-500">
-                                    Full Address
-                                </p>
 
-                                <p className="mt-1 text-sm leading-6 font-medium text-foreground">
-                                    {request.fullAddress ||
-                                        "Not provided"}
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Donation Schedule */}
-                    <section>
-                        <div className="mb-4 flex items-center gap-2">
-                            <FiCalendar className="text-danger" />
-
-                            <h2 className="text-lg font-semibold text-foreground">
+                            <h2 className="font-semibold text-lg">
                                 Donation Schedule
                             </h2>
-                        </div>
 
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            <InfoItem
-                                icon={<FiCalendar />}
-                                label="Donation Date"
-                                value={formatDate(
-                                    request.donationDate
-                                )}
-                            />
 
-                            <InfoItem
-                                icon={<FiClock />}
-                                label="Donation Time"
-                                value={formatTime(
-                                    request.donationTime
-                                )}
-                            />
-                        </div>
-                    </section>
+                            <div className="mt-5 space-y-5">
 
-                    {/* Request Message */}
-                    {request.requestMessage && (
-                        <section>
-                            <div className="mb-4 flex items-center gap-2">
-                                <FiMessageSquare className="text-danger" />
 
-                                <h2 className="text-lg font-semibold text-foreground">
-                                    Request Message
-                                </h2>
+                                <ScheduleItem
+                                    icon={<FiCalendar />}
+                                    label="Date"
+                                    value={formatDate(request.donationDate)}
+                                />
+
+
+                                <ScheduleItem
+                                    icon={<FiClock />}
+                                    label="Time"
+                                    value={formatTime(request.donationTime)}
+                                />
+
+
                             </div>
 
-                            <div className="rounded-xl bg-default-50 p-5">
-                                <p className="whitespace-pre-line text-sm leading-7 text-foreground">
-                                    {
-                                        request.requestMessage
-                                    }
-                                </p>
+
+                            <div className="mt-8">
+
+                                <DonateBloodModal
+                                    request={request}
+                                    requestId={request._id}
+                                    user={user}
+                                    status={request.status}
+                                />
+
                             </div>
-                        </section>
-                    )}
+
+
+                        </aside>
+
+
+
+                    </div>
+
+
                 </div>
 
-                {/* Footer */}
-                <DonateBloodModal request={request} requestId={request._id} user={user} status={request.status} />
-            </div>
-        </main>
-    );
 
+            </main>
+        </>
+    );
+}
+
+
+
+function Section({
+    icon,
+    title,
+    children
+}) {
+
+    return (
+        <section>
+
+            <div className="mb-4 flex items-center gap-3">
+
+                <div className="rounded-xl bg-danger-50 p-2 text-danger">
+                    {icon}
+                </div>
+
+                <h2 className="text-xl font-semibold">
+                    {title}
+                </h2>
+
+            </div>
+
+
+            <div className="grid gap-4 sm:grid-cols-2">
+                {children}
+            </div>
+
+        </section>
+    );
 
 }
 
-function InfoItem({ icon, label, value }) {
-    return (<div className="flex items-start gap-3 rounded-xl bg-default-50 p-4"> <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-danger-50 text-danger">
-        {icon} </div>
 
 
-        <div className="min-w-0">
+function InfoCard({
+    title,
+    value
+}) {
+
+    return (
+        <div className="rounded-2xl border border-default-200 bg-content1 p-5">
+
             <p className="text-sm text-default-500">
-                {label}
+                {title}
             </p>
 
-            <p className="mt-1 break-words font-medium text-foreground">
+            <p className="mt-2 font-semibold">
                 {value || "Not provided"}
             </p>
+
         </div>
-    </div>
     );
 
+}
+
+
+
+function ScheduleItem({
+    icon,
+    label,
+    value
+}) {
+
+    return (
+        <div className="flex items-center gap-4">
+
+            <div className="rounded-xl bg-white p-3 shadow-sm text-danger">
+                {icon}
+            </div>
+
+
+            <div>
+
+                <p className="text-sm text-default-500">
+                    {label}
+                </p>
+
+                <p className="font-semibold">
+                    {value}
+                </p>
+
+            </div>
+
+        </div>
+    );
 
 }
+
+
 
 function formatDate(date) {
+
     if (!date) return "—";
 
-
-    return new Intl.DateTimeFormat("en-GB", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-    }).format(new Date(date));
-
+    return new Intl.DateTimeFormat(
+        "en-GB",
+        {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }
+    ).format(new Date(date));
 
 }
 
+
+
 function formatTime(time) {
+
     if (!time) return "—";
 
-
-    const [hours, minutes] = time.split(":");
-
-    if (hours === undefined || minutes === undefined) {
-        return time;
-    }
+    const [h, m] = time.split(":");
 
     const date = new Date();
-    date.setHours(Number(hours), Number(minutes));
 
-    return new Intl.DateTimeFormat("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-    }).format(date);
+    date.setHours(Number(h), Number(m));
 
+
+    return new Intl.DateTimeFormat(
+        "en-US",
+        {
+            hour: "numeric",
+            minute: "2-digit"
+        }
+    ).format(date);
 
 }

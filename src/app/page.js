@@ -2,10 +2,12 @@ import Banner from "./components/homepage/Banner";
 import Featured from "./components/homepage/Featured";
 import ContactUs from "./components/homepage/ContactUs";
 import Footer from "./components/homepage/Footer";
+import Navbar from "./components/homepage/Navbar";
 
 export default function Home() {
   return (
-    <main>
+    <main>    
+      <Navbar/>
       <Banner/>
       <Featured/>
       <ContactUs/>

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { authHeader } from "./authHeader";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl = process.env.SERVER_URL;
 
 export const serverFetch = async (path) => {
     const res = await fetch(`${baseUrl}${path}`);

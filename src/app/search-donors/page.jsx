@@ -15,6 +15,7 @@ import {
 // Update these import paths to match your project.
 import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
 import LocationSelect from "@/app/components/forms/LocationSelect";
+import Navbar from "../components/homepage/Navbar";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -81,6 +82,7 @@ export default function SearchDonorsPage() {
 
     return (
         <main className="min-h-screen bg-gray-50">
+            <Navbar />
             {/* Hero */}
             <section className="relative overflow-hidden bg-gradient-to-br from-red-700 via-red-600 to-rose-500 px-4 py-16 text-white sm:py-20">
                 <div className="pointer-events-none absolute -right-16 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />

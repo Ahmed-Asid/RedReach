@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FiArrowRight, FiHeart } from "react-icons/fi";
 import { signIn } from "@/lib/auth-client";
+import Navbar from "@/app/components/homepage/Navbar";
 
 const LoginPage = () => {
     const router = useRouter();
@@ -65,6 +66,7 @@ const LoginPage = () => {
 
     return (
         <div>
+            <Navbar />
             <section className="flex items-center justify-center px-4 py-10 sm:px-6 lg:px-10 xl:px-16">
                 <div className="w-full max-w-lg rounded-2xl bg-background px-8 py-10">
 

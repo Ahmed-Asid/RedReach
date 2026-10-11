@@ -28,6 +28,7 @@ import { signUp } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import BloodGroupSelect from "@/app/components/forms/BloodGroupSelect";
 import LocationSelect from "@/app/components/forms/LocationSelect";
+import Navbar from "@/app/components/homepage/Navbar";
 
 
 
@@ -106,6 +107,7 @@ export default function RegisterPage() {
 
     return (
         <main className="min-h-screen bg-background">
+            <Navbar />
             <div className="grid min-h-screen lg:grid-cols-2">
 
                 {/* ========================================================= */}
