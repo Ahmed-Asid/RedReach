@@ -103,7 +103,7 @@ export default function DashboardShell({ user, children }) {
     const handleLogout = async () => {
         await authClient.signOut();
 
-        router.replace("/login");
+        router.replace("/auth/login");
         router.refresh();
     };
 
