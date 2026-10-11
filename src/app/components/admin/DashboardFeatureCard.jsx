@@ -7,8 +7,13 @@ import {
     FiDollarSign,
     FiUsers,
 } from "react-icons/fi";
+import { TbCoinTaka } from "react-icons/tb";
 
-export default function DashboardFeatureCard({ users, requests }) {
+export default function DashboardFeatureCard({ users, requests, funds }) {
+
+    const totalFund = funds.reduce((sum, fund) => {
+        return sum + Number(fund.amount || 0);
+    }, 0);
 
     const cards = [
         {
@@ -19,8 +24,8 @@ export default function DashboardFeatureCard({ users, requests }) {
         },
         {
             title: "Total Funding",
-            count: 0,
-            icon: FiDollarSign,
+            count: totalFund,
+            icon: TbCoinTaka,
             description: "Total amount donated",
         },
         {

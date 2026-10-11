@@ -15,63 +15,22 @@ import {
 } from "react-icons/fi";
 import { Button } from "@heroui/react";
 import Navbar from "../components/homepage/Navbar";
+import { getFundingInfo } from "@/lib/api/fundings";
 
-// Replace this sample data with your funding API response.
-const fundingData = [
-    {
-        id: "FND-1001",
-        name: "Ahmed Rahman",
-        email: "ahmed@example.com",
-        amount: 2500,
-        date: "2026-10-10",
-    },
-    {
-        id: "FND-1002",
-        name: "Nusrat Jahan",
-        email: "nusrat@example.com",
-        amount: 1500,
-        date: "2026-10-09",
-    },
-    {
-        id: "FND-1003",
-        name: "Tanvir Hasan",
-        email: "tanvir@example.com",
-        amount: 5000,
-        date: "2026-10-07",
-    },
-    {
-        id: "FND-1004",
-        name: "Fatema Akter",
-        email: "fatema@example.com",
-        amount: 1000,
-        date: "2026-10-05",
-    },
-    {
-        id: "FND-1005",
-        name: "Sabbir Hossain",
-        email: "sabbir@example.com",
-        amount: 3000,
-        date: "2026-10-02",
-    },
-];
 
-const currency = new Intl.NumberFormat("en-BD", {
-    style: "currency",
-    currency: "BDT",
-    maximumFractionDigits: 0,
-});
+export default async function FundingPage() {
 
-const dateFormatter = new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-});
+    const fundingData = await getFundingInfo();
 
-export default function FundingPage() {
-    const totalFunding = fundingData.reduce(
-        (total, item) => total + item.amount,
-        0
-    );
+    const formatDate = (date) =>
+        new Date(date).toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
 
     return (
         <main className="min-h-screen bg-default-50/50">
@@ -96,7 +55,7 @@ export default function FundingPage() {
                         </p>
                     </div>
 
-                    <Link href="/dashboard/funding/give-fund">
+                    <Link href="/funding/give-fund">
                         <Button
                             color="danger"
                             size="lg"
@@ -166,7 +125,7 @@ export default function FundingPage() {
                                     <tbody className="divide-y divide-default-100">
                                         {fundingData.map((fund) => (
                                             <tr
-                                                key={fund.id}
+                                                key={fund.sessionId && fund.createdAt}
                                                 className="transition-colors hover:bg-danger-50/30"
                                             >
                                                 <td className="px-6 py-4">
@@ -188,16 +147,16 @@ export default function FundingPage() {
 
                                                 <td className="px-6 py-4">
                                                     <p className="font-bold tabular-nums text-foreground">
-                                                        {currency.format(fund.amount)}
+                                                        {fund.amount}
                                                     </p>
                                                 </td>
 
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-2 text-sm text-default-600">
                                                         <FiCalendar className="size-4 shrink-0 text-default-400" />
-                                                        {dateFormatter.format(
-                                                            new Date(`${fund.date}T12:00:00`)
-                                                        )}
+                                                        {
+                                                            formatDate(fund.createdAt)
+                                                        }
                                                     </div>
                                                 </td>
                                             </tr>
