@@ -21,7 +21,7 @@ import { getFundingInfo } from "@/lib/api/fundings";
 export default async function FundingPage() {
 
     const fundingData = await getFundingInfo();
-
+    console.log(fundingData.length, 'total funds')
     const formatDate = (date) =>
         new Date(date).toLocaleDateString("en-US", {
             day: "numeric",
