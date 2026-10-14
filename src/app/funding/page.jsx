@@ -22,7 +22,6 @@ export default async function FundingPage() {
 
     const fundingData = await getFundingInfo();
 
-    console.log(fundingData.length, 'total funds')
     const formatDate = (date) =>
         new Date(date).toLocaleDateString("en-US", {
             day: "numeric",
@@ -126,7 +125,7 @@ export default async function FundingPage() {
                                     <tbody className="divide-y divide-default-100">
                                         {fundingData.map((fund) => (
                                             <tr
-                                                key={fund.sessionId && fund.createdAt}
+                                                key={fund._id}
                                                 className="transition-colors hover:bg-danger-50/30"
                                             >
                                                 <td className="px-6 py-4">

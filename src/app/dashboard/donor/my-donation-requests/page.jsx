@@ -1,6 +1,6 @@
 
 import MyDonationRequests from "@/app/components/donor/MyDonationRequests";
-import { getBloodDonationRequestsByUserId } from "@/lib/api/requests";
+import { getBloodDonationRequestsByUser } from "@/lib/api/requests";
 import { getUserSession, requireRole } from "@/lib/core/session";
 
 const VALID_STATUSES = [
@@ -38,9 +38,7 @@ export default async function MyDonationRequestsPage({
     }
 
     const user = await getUserSession();
-    console.log(user)
-    const data = await getBloodDonationRequestsByUserId(user.id)
-    console.log(data)
+    const data = await getBloodDonationRequestsByUser()
 
     return (
         <section className="space-y-6">

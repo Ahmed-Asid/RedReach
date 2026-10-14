@@ -11,7 +11,6 @@ export default async function CreateDonationRequestPage() {
     const user = await getUserSession();
 
     if (user.status !== "active") {
-        console.log('blocked user', user)
         return <BlockedAccount />
     }
 

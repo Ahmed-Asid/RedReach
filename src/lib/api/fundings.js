@@ -1,6 +1,6 @@
 'use server'
 
-const baseUrl = process.env.SERVER_URL;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getFundingInfo = async () => {
     const res = await fetch(`${baseUrl}/api/donations`,{

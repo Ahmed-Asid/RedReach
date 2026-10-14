@@ -43,6 +43,10 @@ const DonateBloodModal = ({ requestId, request, user, status }) => {
         }
     };
 
+    if (request.requesterId === user.id) {
+        return
+    }
+
     if (status !== "pending") {
         return (
             <div className="flex items-center gap-2 rounded-xl border border-default-200 bg-default-50 px-4 py-3 text-sm text-default-500">
@@ -51,6 +55,8 @@ const DonateBloodModal = ({ requestId, request, user, status }) => {
             </div>
         );
     }
+
+
 
     return (
         <div className="mx-auto mb-2 w-full">

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react"
 import { Button, Card } from "@heroui/react";
 import { FiFilter } from "react-icons/fi";
 
@@ -20,7 +19,6 @@ export default function MyDonationRequests({
     user,
     requests = []
 }) {
-    const router = useRouter();
 
     const [selectedStatus, setSelectedStatus] = useState("all");
 

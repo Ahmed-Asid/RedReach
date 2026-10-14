@@ -27,7 +27,6 @@ const DashboardRequests = ({ user, requests }) => {
         return await deleteDonationRequest(id);
     }
 
-    console.log('recentRequests', recentRequests)
     return (
         <>
 

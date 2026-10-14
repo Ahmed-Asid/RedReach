@@ -8,7 +8,7 @@ export default function DeleteRequestModal({
     onDelete,
     children,
 }) {
-    console.log(request._id)
+
     return (
         <Modal>
             {children}

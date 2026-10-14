@@ -1,5 +1,5 @@
-import { serverFetch } from "../core/server"
+import { protectedFetch } from "../core/server"
 
 export const getAllUser = async() => {
-    return serverFetch('/api/users');
+    return protectedFetch('/api/users');
 }

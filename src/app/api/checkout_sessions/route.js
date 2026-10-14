@@ -16,9 +16,21 @@ export async function POST(request) {
 
     const user = await getUserSession();
 
-    // Create Checkout Sessions from body params.
+  let customerId;
+    const existingCustomers = await stripe.customers.list({ email: user.email, limit: 1 });
+
+    if (existingCustomers.data.length > 0) {
+      customerId = existingCustomers.data.id;
+    } else {
+      const newCustomer = await stripe.customers.create({
+        email: user.email,
+        name: user.name, 
+      });
+      customerId = newCustomer.id;
+    }
+
     const session = await stripe.checkout.sessions.create({
-        customer_email: user.email, 
+        customer: customerId, 
       line_items: [
         {
           price_data: {

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { authHeader } from "./authHeader";
+import { getTokenServer } from "../getTokenServer";
 
-const baseUrl = process.env.SERVER_URL;
+export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const serverFetch = async (path) => {
     const res = await fetch(`${baseUrl}${path}`);
@@ -10,23 +10,26 @@ export const serverFetch = async (path) => {
 }
 
 export const protectedFetch = async (path) => {
-    const res = await fetch(`${baseUrl}${path}`,
-        // {
-        //     headers: await authHeader()
-        // }
-    );
 
-    // handle 401, 403
+    const token = await getTokenServer();
+    const res = await fetch(`${baseUrl}${path}`,{
+        headers: {
+            authorization: `Bearer ${token}`
+        }}
+    );
 
     return handleStatusCode(res);
 }
 
 
 export const serverMutation = async (path, data = null, method = "POST") => {
+
+    const token = await getTokenServer();
     const res = await fetch(`${baseUrl}${path}`, {
         method,
         headers: {
             ...(data && { "Content-Type": "application/json" }),
+            authorization: `Bearer ${token}`
         },
         ...(data && { body: JSON.stringify(data) }),
     });

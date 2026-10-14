@@ -49,8 +49,6 @@ const LoginPage = () => {
                 return;
             }
 
-            console.log("Login successful:", data);
-
             router.push("/");
             router.refresh();
         } catch (error) {

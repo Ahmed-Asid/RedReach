@@ -24,7 +24,7 @@ export default function RequestsTable({
     onStatusChange,
     onDelete
 }) {
-    console.log("table", user)
+
     const statusStyles = {
         pending: "bg-yellow-50 text-yellow-700",
         inprogress: "bg-blue-50 text-blue-700",

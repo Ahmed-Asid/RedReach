@@ -1,7 +1,7 @@
 import { protectedFetch, serverFetch } from "../core/server";
 
-export const getBloodDonationRequestsByUserId = async (requesterId) => {
-    return protectedFetch(`/api/donation-requests/user/${requesterId}`)
+export const getBloodDonationRequestsByUser = async () => {
+    return protectedFetch(`/api/donation-requests/my-requests`)
 };
 
 export const getBloodDonationRequestById = async (id) => {

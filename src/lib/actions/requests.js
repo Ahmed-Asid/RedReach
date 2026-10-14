@@ -15,7 +15,7 @@ export const updateDonationRequest = async(id, data) => {
 }
 
 export const deleteDonationRequest = async(id) => {
-    const result = await serverMutation(`/api/donation-requests/${id}`,null, 'DELETE')
+    const result = await serverMutation(`/api/donation-requests/${id}`, null, 'DELETE')
     revalidatePath('/dashboard/donor/my-donation-requests');
     return result;
 }
