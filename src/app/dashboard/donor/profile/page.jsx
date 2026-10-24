@@ -5,9 +5,8 @@ import ProfileForm from "@/app/components/profile/ProfileForm";
 import { getUserSession, requireRole } from "@/lib/core/session";
 
 export default async function ProfilePage() {
-
     const user = await getUserSession();
-
+    console.log('user', user)
     return (
         <section className="space-y-6">
             <div>

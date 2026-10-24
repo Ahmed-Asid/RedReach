@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -37,8 +36,6 @@ export default function ProfileForm({ user }) {
         district: user?.district ?? "",
         upazila: user?.upazila ?? "",
     });
-
-    console.log("initial profile info", user)
 
     const [form, setForm] = useState(getInitialForm);
 
@@ -107,7 +104,7 @@ export default function ProfileForm({ user }) {
                 upazila: form.upazila,
                 image: form.image,
             };
-            console.log('updated info', data)
+
             await updateUser(user.id, data);
 
             setForm((current) => ({
@@ -119,12 +116,10 @@ export default function ProfileForm({ user }) {
             toast.success("Profile updated successfully.");
 
             router.refresh();
+            console.log("working")
         } catch (error) {
             console.error("Profile update error:", error);
-
-            toast.danger(
-                error.message || "Failed to update profile."
-            );
+            toast.danger(error.message || "Failed to update profile.");
         } finally {
             setIsSaving(false);
         }
@@ -143,7 +138,7 @@ export default function ProfileForm({ user }) {
                     </Card.Description>
                 </div>
 
-                {!isEditing ? (
+                {!isEditing && (
                     <Button
                         color="danger"
                         variant="flat"
@@ -152,32 +147,11 @@ export default function ProfileForm({ user }) {
                         <FiEdit3 />
                         Edit Profile
                     </Button>
-                ) : (
-                    <div className="flex items-center gap-2">
-                        <Button
-                            variant="flat"
-                            onPress={handleCancel}
-                            isDisabled={isSaving}
-                        >
-                            Cancel
-                        </Button>
-
-                        <Button
-                            color="danger"
-                            type="submit"
-                            form="profile-form"
-                            isDisabled={isSaving}
-                        >
-                            <FiSave />
-                            {isSaving ? "Saving..." : "Save Changes"}
-                        </Button>
-                    </div>
                 )}
             </Card.Header>
 
             <Card.Content className="p-6">
                 <Form
-                    id="profile-form"
                     onSubmit={handleSubmit}
                     className="space-y-6"
                 >
@@ -209,10 +183,6 @@ export default function ProfileForm({ user }) {
                     {/* Name */}
                     <TextField
                         name="name"
-                        value={form.name}
-                        onChange={(value) =>
-                            handleChange("name", value)
-                        }
                         isRequired
                         isDisabled={!isEditing || isSaving}
                         className="w-full"
@@ -224,7 +194,10 @@ export default function ProfileForm({ user }) {
                                 <FiUser className="size-4 text-default-400" />
                             </InputGroup.Prefix>
 
+                            {/* ✅ Properly bound to state */}
                             <InputGroup.Input
+                                value={form.name}
+                                onChange={(e) => handleChange("name", e.target.value)}
                                 placeholder="Enter your full name"
                             />
                         </InputGroup>
@@ -233,7 +206,6 @@ export default function ProfileForm({ user }) {
                     {/* Email: read-only */}
                     <TextField
                         name="email"
-                        value={form.email}
                         isDisabled
                         className="w-full"
                     >
@@ -244,7 +216,11 @@ export default function ProfileForm({ user }) {
                                 <FiMail className="size-4 text-default-400" />
                             </InputGroup.Prefix>
 
-                            <InputGroup.Input readOnly />
+                            {/* ✅ Properly bound to state */}
+                            <InputGroup.Input
+                                value={form.email}
+                                readOnly
+                            />
                         </InputGroup>
                     </TextField>
 
@@ -286,6 +262,29 @@ export default function ProfileForm({ user }) {
                             required
                         />
                     </div>
+
+                    {/* Action buttons */}
+                    {isEditing && (
+                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-default-200">
+                            <Button
+                                type="button"
+                                variant="flat"
+                                onPress={handleCancel}
+                                isDisabled={isSaving}
+                            >
+                                Cancel
+                            </Button>
+
+                            <Button
+                                color="danger"
+                                type="submit"
+                                isDisabled={isSaving}
+                            >
+                                <FiSave />
+                                {isSaving ? "Saving..." : "Save Changes"}
+                            </Button>
+                        </div>
+                    )}
                 </Form>
             </Card.Content>
         </Card>

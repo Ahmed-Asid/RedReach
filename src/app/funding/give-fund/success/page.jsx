@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { Button } from "@heroui/react"
 import { FiCheckCircle, FiArrowRight, FiShield } from "react-icons/fi"
 import { postFundingInfo } from '@/lib/actions/fundings'
-import { revalidatePath } from 'next/cache'
 
 export default async function SuccessPage({ searchParams }) {
 
@@ -41,7 +40,6 @@ export default async function SuccessPage({ searchParams }) {
                     amount: amount_total / 100,
                 }
             )
-            revalidatePath('/funding')
         } catch (e) {
             console.error("Failed to record donation:", e);
         }

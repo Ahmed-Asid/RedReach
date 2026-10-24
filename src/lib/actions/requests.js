@@ -37,6 +37,7 @@ export const confirmDonation = async (requestId) => {
         };
     }
 
+    revalidatePath('/donation-requests')
     return serverMutation(
         `/api/donation-requests/${requestId}`,
         {
