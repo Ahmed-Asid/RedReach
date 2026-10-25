@@ -116,7 +116,6 @@ export default function ProfileForm({ user }) {
             toast.success("Profile updated successfully.");
 
             router.refresh();
-            console.log("working")
         } catch (error) {
             console.error("Profile update error:", error);
             toast.danger(error.message || "Failed to update profile.");

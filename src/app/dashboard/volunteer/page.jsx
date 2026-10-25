@@ -11,7 +11,7 @@ const VolunteerDashboardPage = async () => {
     const user = await getUserSession();
     const users = await getAllUser();
     const requests = await getBloodDonationRequests();
-    const funds = getFundingInfo()
+    const funds = await getFundingInfo();
 
     return (
         <div>

@@ -1,8 +1,10 @@
 
+import { getUserSession } from "@/lib/core/session";
 import Link from "next/link";
 import { FiArrowLeft, FiLock } from "react-icons/fi";
 
-export default function ForbiddenPage() {
+export default async function ForbiddenPage() {
+    const user = await getUserSession()
     return (
         <main className="min-h-screen bg-red-50 flex items-center justify-center px-6">
             <div className="w-full max-w-lg text-center">
@@ -31,7 +33,7 @@ export default function ForbiddenPage() {
                 {/* Action */}
                 <div className="mt-8 flex justify-center">
                     <Link
-                        href="/dashboard"
+                        href={`/dashboard/${user.role}`}
                         color="danger"
                         variant="solid"
                         startContent={<FiArrowLeft size={18} />}

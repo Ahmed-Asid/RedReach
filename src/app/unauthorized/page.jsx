@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { FiArrowLeft, FiLogIn } from "react-icons/fi";
 
-export default function UnauthorizedPage() {
+export default async function UnauthorizedPage() {
     return (
         <main className="min-h-screen bg-red-50 flex items-center justify-center px-6">
             <div className="w-full max-w-lg text-center">
@@ -29,7 +29,7 @@ export default function UnauthorizedPage() {
                 {/* Actions */}
                 <div className="mt-8 flex justify-center gap-3">
                     <Link
-                        href="/login"
+                        href="/auth/login"
                         color="danger"
                         variant="solid"
                         startContent={<FiLogIn size={18} />}

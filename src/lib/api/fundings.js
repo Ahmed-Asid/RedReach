@@ -1,5 +1,7 @@
 'use server'
 
+import { redirect } from "next/navigation";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getFundingInfo = async () => {
